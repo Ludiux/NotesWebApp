@@ -11,4 +11,5 @@ import java.util.List;
 public interface NoteRepository extends JpaRepository<Note, Long> {
     List<Note> findByUserIdOrderByUpdatedAtDesc(Long userId);
     List<Note> findByUserIdAndTitleContainingIgnoreCase(Long userId, String title);
+    List<Note> findByUserIdAndArchivedOrderByUpdatedAtDesc(Long userId, boolean archived);
 }

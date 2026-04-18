@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +59,25 @@ public class NoteController {
         Long userId = getCurrentUserId();
         noteService.deleteNote(id, userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/archive")
+    public ResponseEntity<NoteResponse> archiveNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(noteService.archiveNote(id, user.getId()));
+    }
+
+    @PatchMapping("/{id}/unarchive")
+    public ResponseEntity<NoteResponse> unarchiveNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(noteService.unarchiveNote(id, user.getId()));
+    }
+    @GetMapping("/active")
+    public ResponseEntity<List<NoteResponse>> getActiveNotes(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(noteService.getNotesByArchivedStatus(user.getId(), false));
+    }
+
+    @GetMapping("/archived")
+    public ResponseEntity<List<NoteResponse>> getArchivedNotes(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(noteService.getNotesByArchivedStatus(user.getId(), true));
     }
 
     // Get userId with JWT token

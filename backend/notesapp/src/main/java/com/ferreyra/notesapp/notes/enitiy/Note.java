@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "notes")
@@ -33,6 +35,9 @@ public class Note {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(nullable = false)
+    private boolean archived = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -42,5 +47,23 @@ public class Note {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "note_categories",
+            joinColumns = @JoinColumn(name = "note_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
+
+    public void addCategory(Category category) {
+        categories.add(category);
+        category.getNotes().add(this);
+    }
+
+    public void removeCategory(Category category) {
+        categories.remove(category);
+        category.getNotes().remove(this);
     }
 }
