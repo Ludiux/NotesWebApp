@@ -1,12 +1,12 @@
 #!/bin/bash
 
 echo "Starting backend..."
-cd backend
+cd backend/notesapp
 ./mvnw spring-boot:run &
 BACKEND_PID=$!
 
 echo "Starting frontend..."
-cd ../frontend
+cd ../frontend/notesSpaReactApp
 npm install
 npm run dev &
 FRONTEND_PID=$!
