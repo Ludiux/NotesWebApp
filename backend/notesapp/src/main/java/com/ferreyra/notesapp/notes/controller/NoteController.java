@@ -1,6 +1,5 @@
 package com.ferreyra.notesapp.notes.controller;
 
-
 import com.ferreyra.notesapp.auth.entity.User;
 import com.ferreyra.notesapp.auth.repository.UserRepository;
 import com.ferreyra.notesapp.notes.dto.NoteRequest;
@@ -10,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -62,22 +60,50 @@ public class NoteController {
     }
 
     @PatchMapping("/{id}/archive")
-    public ResponseEntity<NoteResponse> archiveNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(noteService.archiveNote(id, user.getId()));
+    public ResponseEntity<NoteResponse> archiveNote(@PathVariable Long id) {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.archiveNote(id, userId));
     }
 
     @PatchMapping("/{id}/unarchive")
-    public ResponseEntity<NoteResponse> unarchiveNote(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(noteService.unarchiveNote(id, user.getId()));
+    public ResponseEntity<NoteResponse> unarchiveNote(@PathVariable Long id) {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.unarchiveNote(id, userId));
     }
+
     @GetMapping("/active")
-    public ResponseEntity<List<NoteResponse>> getActiveNotes(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(noteService.getNotesByArchivedStatus(user.getId(), false));
+    public ResponseEntity<List<NoteResponse>> getActiveNotes() {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.getNotesByArchivedStatus(userId, false));
     }
 
     @GetMapping("/archived")
-    public ResponseEntity<List<NoteResponse>> getArchivedNotes(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(noteService.getNotesByArchivedStatus(user.getId(), true));
+    public ResponseEntity<List<NoteResponse>> getArchivedNotes() {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.getNotesByArchivedStatus(userId, true));
+    }
+
+    // Category Endpoints
+    @PostMapping("/{noteId}/categories/{categoryId}")
+    public ResponseEntity<NoteResponse> addCategoryToNote(
+            @PathVariable Long noteId,
+            @PathVariable Long categoryId) {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.addCategoryToNote(noteId, categoryId, userId));
+    }
+
+    @DeleteMapping("/{noteId}/categories/{categoryId}")
+    public ResponseEntity<NoteResponse> removeCategoryFromNote(
+            @PathVariable Long noteId,
+            @PathVariable Long categoryId) {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.removeCategoryFromNote(noteId, categoryId, userId));
+    }
+
+    @GetMapping("/by-category/{categoryId}")
+    public ResponseEntity<List<NoteResponse>> getNotesByCategory(@PathVariable Long categoryId) {
+        Long userId = getCurrentUserId();  // ← Changed
+        return ResponseEntity.ok(noteService.getNotesByCategory(categoryId, userId));
     }
 
     // Get userId with JWT token

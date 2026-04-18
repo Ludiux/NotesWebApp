@@ -3,7 +3,9 @@ package com.ferreyra.notesapp.notes.service;
 
 import com.ferreyra.notesapp.notes.dto.NoteRequest;
 import com.ferreyra.notesapp.notes.dto.NoteResponse;
-import com.ferreyra.notesapp.notes.enitiy.Note;
+import com.ferreyra.notesapp.notes.entity.Category;
+import com.ferreyra.notesapp.notes.entity.Note;
+import com.ferreyra.notesapp.notes.repository.CategoryRepository;
 import com.ferreyra.notesapp.notes.repository.NoteRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoteService {
     private final NoteRepository noteRepository;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public NoteResponse createNote(NoteRequest request, Long userId) {
@@ -37,6 +40,35 @@ public class NoteService {
         Note note = getNoteAndCheckOwnership(id, userId);
         note.setArchived(false);
         return convertToResponse(noteRepository.save(note));
+    }
+    @Transactional
+    public NoteResponse addCategoryToNote(Long noteId, Long categoryId, Long userId) {
+        Note note = getNoteAndCheckOwnership(noteId, userId);
+        Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        note.addCategory(category);
+        return convertToResponse(noteRepository.save(note));
+    }
+
+    @Transactional
+    public NoteResponse removeCategoryFromNote(Long noteId, Long categoryId, Long userId) {
+        Note note = getNoteAndCheckOwnership(noteId, userId);
+        Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        note.removeCategory(category);
+        return convertToResponse(noteRepository.save(note));
+    }
+
+    public List<NoteResponse> getNotesByCategory(Long categoryId, Long userId) {
+        Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        return category.getNotes().stream()
+                .filter(note -> note.getUserId().equals(userId))
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     public List<NoteResponse> getNotesByArchivedStatus(Long userId, boolean archived) {

@@ -1,4 +1,4 @@
-package com.ferreyra.notesapp.notes.enitiy;
+package com.ferreyra.notesapp.notes.entity;
 
 
 import jakarta.persistence.*;

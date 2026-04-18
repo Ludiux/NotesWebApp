@@ -1,7 +1,7 @@
 package com.ferreyra.notesapp.notes.repository;
 
 
-import com.ferreyra.notesapp.notes.enitiy.Note;
+import com.ferreyra.notesapp.notes.entity.Note;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
