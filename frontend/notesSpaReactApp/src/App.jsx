@@ -10,6 +10,7 @@ function App() {
     const [loginState, setLoginState] = useState(false);
     const [register, setRegister] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [refresh, setRefresh] = useState(false);
 
 
     useEffect(() => {
@@ -24,8 +25,8 @@ function App() {
     return (
         <div className="bg-[#003052] w-screen h-screen relative">
             <div className="flex flex-col items-center justify-center h-full">
-                <Header setLoginState={setLoginState}/>
-                <Body/>
+                <Header setLoginState={setLoginState} setRefresh={setRefresh}/>
+                <Body setRefresh={setRefresh} refresh={refresh}/>
             </div>
             {(!loginState || register) ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
