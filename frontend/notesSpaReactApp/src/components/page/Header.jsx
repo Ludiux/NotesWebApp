@@ -4,6 +4,7 @@ import React from 'react'
 const Header = ({setLoginState}) => {
 
     const CurrentCategory = "Category";
+    
 
     return (
         <div className="bg-[#003052] w-full h-60 flex justify-between items-start">

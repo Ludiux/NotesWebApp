@@ -20,7 +20,8 @@ const Login = ({setLoginState, setRegister}) => {
                 identifier: data.identifier,
                 password: data.password
             });
-            localStorage.setItem('token', response.data.token);
+            console.log("LOGIN RESPONSE:", response.data);
+            localStorage.setItem('token', response.data.accessToken);
             setLoginState(true)
 
             console.log('Login successful!');
