@@ -1,9 +1,16 @@
 import React, {useEffect, useState} from 'react'
 import {notes} from "../../services/api.js";
+import {Alert, Snackbar} from "@mui/material";
+import {useForm} from "react-hook-form";
 
 const Body = ({refresh, setRefresh}) => {
     const [noteList, setNoteList] = useState([]);
+    const {register, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm();
+    const [updateNote, setUpdateNote] = useState(false);
+    const [selectedNote, setSelectedNote] = useState(null);
 
+
+    // Get All Notes
     useEffect(() => {
         notes.getAll()
             .then(res => {
@@ -15,6 +22,7 @@ const Body = ({refresh, setRefresh}) => {
 
     }, [refresh]);
 
+    // Delete Note Function
     const DeleteBtn = async (id) => {
         try {
             await notes.delete(id);
@@ -27,6 +35,41 @@ const Body = ({refresh, setRefresh}) => {
         }
     }
 
+    // Update Note Functionality
+
+    // Fill Note Form
+    useEffect(() => {
+        if (selectedNote) {
+            reset({
+                title: selectedNote.title,
+                content: selectedNote.content,
+            });
+        }
+    }, [selectedNote, reset]);
+
+    // Update Note
+    const HandleUpdate = async (data) => {
+        if (!selectedNote) return;
+
+        try {
+            const response = await notes.update(selectedNote.id, {
+                title: data.title,
+                content: data.content,
+            });
+
+            console.log("UPDATED:", response.data);
+
+            setUpdateNote(false);
+            setSelectedNote(null);
+            reset();
+            setRefresh(prev => !prev);
+
+        } catch (error) {
+            console.error("Update failed:", error.response?.data);
+        }
+    };
+
+    // Refresh Notes Function
     const RefreshButton = async () => {
         setRefresh(true);
         await new Promise(resolve => setTimeout(resolve, 600));
@@ -37,6 +80,55 @@ const Body = ({refresh, setRefresh}) => {
 
     return (
         <div className="bg-[#003052] w-full h-full flex flex-col justify-center items-center">
+            {updateNote &&
+                (<div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
+                    <div className="w-135 h-160 mx-4 rounded-md flex flex-col bg-[#9a513e]">
+                        <form onSubmit={handleSubmit(HandleUpdate)}>
+                            <input
+                                {...register("title", {
+                                        required: true,
+                                    }
+                                )}
+                                className="text-[#879a3e] appearance-none bg-transparent border-none focus:outline-none text-4xl font-bold text-center pt-3 underline decoration-[#9a3e59]"
+                                placeholder="Title"/>
+                            <Snackbar
+                                open={Object.keys(errors).length > 0}
+                                autoHideDuration={2000}
+                                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                            >
+                                <Alert severity="error">
+                                    Field is Required
+                                </Alert>
+                            </Snackbar>
+                            <textarea
+                                {...register("content")}
+                                className="text-[#879a3e] appearance-none bg-transparent border-none focus:outline-none resize-none w-full h-130 overflow-y-scroll text-left text-xl px-4 pt-3 underline decoration-[#9a3e59]"
+                                placeholder="Text"
+                            />
+                            <div className={`relative top-2 ${isSubmitting ? "left-65" : "left-80"}`}>
+                                <button
+                                    onClick={() => {
+                                        setSelectedNote(null);
+                                        setUpdateNote(false)
+                                    }
+                                    }
+                                    disabled={isSubmitting}
+                                    type="button"
+                                    className={`font-medium font-roboto mx-4 text-xl text-white bg-[#9a3e59] hover:bg-fuchsia-800 cursor-pointer rounded-lg w-fit h-fit py-2 px-2`}>
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`font-medium font-roboto text-xl  text-white bg-[#1e74fd] hover:bg-blue-600 cursor-pointer rounded-lg w-fit h-fit py-2 px-2`}>
+                                    {isSubmitting ? "Updating..." : "Update"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>)
+
+            }
             <div
                 className="flex flex-col items-start justify-baseline h-170 w-80 rounded-md fixed left-10 bg-[#2f4476]">
                 <ol className="w-70 mx-4  mt-20 text-surface overflow-y-scroll dark:text-white">
@@ -74,13 +166,22 @@ const Body = ({refresh, setRefresh}) => {
                             </div>
 
                             <button
+                                onClick={() => {
+                                    setUpdateNote(true);
+                                    setSelectedNote(note);
+                                }
+                                }
+                                className="w-20 h-10 bg-[#9a3e59] relative bottom-12 left-90 rounded-xl transition-colors hover:bg-yellow-700 cursor-pointer text-white font-roboto font-semibold">
+                                Update
+                            </button>
+
+                            <button
                                 onClick={() => DeleteBtn(note.id)}
-                                className="w-20 h-10 bg-yellow-600 relative bottom-12 left-116 rounded-xl transition-colors hover:bg-red-400 cursor-pointer text-white font-roboto font-semibold">
+                                className="w-20 h-10 bg-yellow-600 relative bottom-12 left-95 rounded-xl transition-colors hover:bg-red-400 cursor-pointer text-white font-roboto font-semibold">
                                 Delete
                             </button>
                         </li>
                     ))}
-
                 </ol>
             </div>
         </div>
