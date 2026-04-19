@@ -15,6 +15,18 @@ const Body = ({refresh, setRefresh}) => {
 
     }, [refresh]);
 
+    const DeleteBtn = async (id) => {
+        try {
+            await notes.delete(id);
+
+            setNoteList(prev => prev.filter(note => note.id !== id));
+
+            console.log("Note deleted");
+        } catch (error) {
+            console.error("Delete failed:", error.response?.data);
+        }
+    }
+
     const RefreshButton = async () => {
         setRefresh(true);
         await new Promise(resolve => setTimeout(resolve, 600));
@@ -62,7 +74,8 @@ const Body = ({refresh, setRefresh}) => {
                             </div>
 
                             <button
-                                className="w-20 h-10 bg-yellow-600 relative bottom-12 left-116 rounded-xl text-white font-roboto font-semibold">
+                                onClick={() => DeleteBtn(note.id)}
+                                className="w-20 h-10 bg-yellow-600 relative bottom-12 left-116 rounded-xl transition-colors hover:bg-red-400 cursor-pointer text-white font-roboto font-semibold">
                                 Delete
                             </button>
                         </li>

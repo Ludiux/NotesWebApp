@@ -7,7 +7,7 @@ import {Alert, Snackbar} from "@mui/material";
 const Header = ({setLoginState, setRefresh}) => {
     const [newNote, setNewNote] = useState(false);
     const CurrentCategory = "Category";
-    const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm();
+    const {register, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm();
 
 
     const HandleDoneBtn = async (data) => {
@@ -22,6 +22,8 @@ const Header = ({setLoginState, setRefresh}) => {
             setRefresh(true);
             await new Promise(resolve => setTimeout(resolve, 600));
             setRefresh(false);
+
+            reset();
 
             console.log("NOTE RESPONSE:", response.data);
             setNewNote(false);
@@ -80,12 +82,21 @@ const Header = ({setLoginState, setRefresh}) => {
                                 className="text-[#879a3e] appearance-none bg-transparent border-none focus:outline-none resize-none w-full h-130 overflow-y-scroll text-left text-xl px-4 pt-3 underline decoration-[#9a3e59]"
                                 placeholder="Text"
                             />
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="font-medium font-roboto text-xl relative left-110 top-2 text-white bg-[#1e74fd] hover:bg-blue-600 cursor-pointer rounded-lg w-fit h-fit py-2 px-2">
-                                {isSubmitting ? "Creating..." : "Create"}
-                            </button>
+                            <div className={`relative top-2 ${isSubmitting ? "left-65" : "left-80"}`}>
+                                <button
+                                    onClick={() => setNewNote(false)}
+                                    disabled={isSubmitting}
+                                    type="button"
+                                    className={`font-medium font-roboto mx-4 text-xl text-white bg-[#9a3e59] hover:bg-fuchsia-800 cursor-pointer rounded-lg w-fit h-fit py-2 px-2`}>
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className={`font-medium font-roboto text-xl  text-white bg-[#1e74fd] hover:bg-blue-600 cursor-pointer rounded-lg w-fit h-fit py-2 px-2`}>
+                                    {isSubmitting ? "Creating..." : "Create"}
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>)

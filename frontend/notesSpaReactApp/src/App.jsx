@@ -33,7 +33,7 @@ function App() {
                     {register ? (
                         <Register setLoginState={setLoginState} setRegister={setRegister} setSuccess={setSuccess}/>
                     ) : (
-                        <Login setLoginState={setLoginState} setRegister={setRegister}/>
+                        <Login setLoginState={setLoginState} setRegister={setRegister} setRefresh={setRefresh}/>
                     )}
                 </div>
             ) : null}

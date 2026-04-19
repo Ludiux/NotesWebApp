@@ -3,7 +3,7 @@ import {useForm} from 'react-hook-form';
 import {auth} from "../../services/api.js";
 import {Alert, Snackbar} from "@mui/material";
 
-const Login = ({setLoginState, setRegister}) => {
+const Login = ({setLoginState, setRegister, setRefresh}) => {
     const [result, setResult] = useState('');
     const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm();
 
@@ -23,6 +23,10 @@ const Login = ({setLoginState, setRegister}) => {
             console.log("LOGIN RESPONSE:", response.data);
             localStorage.setItem('token', response.data.accessToken);
             setLoginState(true)
+
+            setRefresh(true);
+            await new Promise(resolve => setTimeout(resolve, 600));
+            setRefresh(false);
 
             console.log('Login successful!');
             setResult('success')
