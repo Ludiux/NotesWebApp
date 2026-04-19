@@ -8,19 +8,29 @@ const Body = ({refresh, setRefresh}) => {
     const {register, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm();
     const [updateNote, setUpdateNote] = useState(false);
     const [selectedNote, setSelectedNote] = useState(null);
+    const [view, setView] = useState("active");
 
 
-    // Get All Notes
+    // Get Notes Filtered by Active or Archived
     useEffect(() => {
-        notes.getAll()
-            .then(res => {
-                console.log("DATA:", res.data);
+        const fetchNotes = async () => {
+            try {
+                let res;
+
+                if (view === "active") {
+                    res = await notes.getActive();
+                } else {
+                    res = await notes.getArchived();
+                }
+
                 setNoteList(res.data);
+            } catch (err) {
+                console.error(err);
+            }
+        };
 
-            })
-            .catch(err => console.error(err));
-
-    }, [refresh]);
+        fetchNotes();
+    }, [refresh, view]);
 
     // Delete Note Function
     const DeleteBtn = async (id) => {
@@ -80,6 +90,7 @@ const Body = ({refresh, setRefresh}) => {
 
     return (
         <div className="bg-[#003052] w-full h-full flex flex-col justify-center items-center">
+
             {updateNote &&
                 (<div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
                     <div className="w-135 h-160 mx-4 rounded-md flex flex-col bg-[#9a513e]">
@@ -180,9 +191,38 @@ const Body = ({refresh, setRefresh}) => {
                                 className="w-20 h-10 bg-yellow-600 relative bottom-12 left-95 rounded-xl transition-colors hover:bg-red-400 cursor-pointer text-white font-roboto font-semibold">
                                 Delete
                             </button>
+                            <button
+                                onClick={async () => {
+                                    if (view === "active") {
+                                        await notes.archive(note.id);
+                                    } else {
+                                        await notes.unarchive(note.id);
+                                    }
+
+                                    setRefresh(prev => !prev);
+                                }}
+                                className="w-20 h-10 relative bottom-12 left-25 bg-[#1e74fd] cursor-pointer transition-colors hover:bg-blue-600 text-white rounded-xl"
+                            >
+                                {view === "active" ? "Archive" : "Restore"}
+                            </button>
                         </li>
                     ))}
                 </ol>
+            </div>
+            <div className="flex gap-4 mb-4">
+                <button
+                    onClick={() => setView("active")}
+                    className={`px-6 py-1 fixed top-26 right-29 rounded ${view === "active" ? "bg-green-500" : "bg-gray-500"}`}
+                >
+                    Active
+                </button>
+
+                <button
+                    onClick={() => setView("archived")}
+                    className={`px-3 py-1 fixed top-26 right-5 rounded ${view === "archived" ? "bg-yellow-500" : "bg-gray-500"}`}
+                >
+                    Archived
+                </button>
             </div>
         </div>
     )
