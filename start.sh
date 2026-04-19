@@ -1,13 +1,14 @@
 #!/bin/bash
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 echo "Starting backend..."
-cd backend/notesapp
+cd "$SCRIPT_DIR/backend/notesapp"
 ./mvnw spring-boot:run &
 BACKEND_PID=$!
 
 echo "Starting frontend..."
-cd ../frontend/notesSpaReactApp
-npm install
+cd "$SCRIPT_DIR/frontend/notesSpaReactApp"
 npm run dev &
 FRONTEND_PID=$!
 
