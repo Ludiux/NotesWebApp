@@ -3,11 +3,14 @@ import Body from "./components/page/Body.jsx";
 import {useEffect, useState} from "react";
 import Login from "./components/auth/Login.jsx";
 import Register from "./components/auth/Register.jsx";
+import {Alert, Snackbar} from "@mui/material";
 
 
 function App() {
     const [loginState, setLoginState] = useState(false);
     const [register, setRegister] = useState(false);
+    const [success, setSuccess] = useState(false);
+
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -27,13 +30,23 @@ function App() {
             {(!loginState || register) ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
                     {register ? (
-                        <Register setLoginState={setLoginState} setRegister={setRegister}/>
+                        <Register setLoginState={setLoginState} setRegister={setRegister} setSuccess={setSuccess}/>
                     ) : (
                         <Login setLoginState={setLoginState} setRegister={setRegister}/>
                     )}
                 </div>
             ) : null}
 
+            <Snackbar
+                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                open={success === true}
+                autoHideDuration={2000}
+                onClose={() => {
+                    setSuccess(false)
+                }}
+            >
+                <Alert severity="success">You Registered Correctly!</Alert>
+            </Snackbar>
         </div>
     )
 }

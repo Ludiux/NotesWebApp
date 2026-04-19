@@ -3,10 +3,9 @@ import {useForm} from "react-hook-form";
 import {auth} from "../../services/api.js";
 import {Alert, Snackbar} from "@mui/material";
 
-const Register = ({setRegister, setLoginState}) => {
+const Register = ({setRegister, setLoginState, setSuccess}) => {
     const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm();
     const [taken, setTaken] = useState(false);
-    const [success, setSuccess] = useState(false);
 
     const LoginButton = () => {
         setLoginState(false);
@@ -129,16 +128,6 @@ const Register = ({setRegister, setLoginState}) => {
                 }}
             >
                 <Alert severity="error">Email or Username is already Taken</Alert>
-            </Snackbar>
-            <Snackbar
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-                open={success === true}
-                autoHideDuration={2000}
-                onClose={() => {
-                    setTaken(false)
-                }}
-            >
-                <Alert severity="success">You Registered Correctly!</Alert>
             </Snackbar>
         </>
     )
