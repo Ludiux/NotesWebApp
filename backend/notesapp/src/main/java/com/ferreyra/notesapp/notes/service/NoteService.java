@@ -61,6 +61,7 @@ public class NoteService {
         return convertToResponse(noteRepository.save(note));
     }
 
+    @Transactional
     public List<NoteResponse> getNotesByCategory(Long categoryId, Long userId) {
         Category category = categoryRepository.findByIdAndUserId(categoryId, userId)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
