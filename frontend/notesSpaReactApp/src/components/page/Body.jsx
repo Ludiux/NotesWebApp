@@ -228,7 +228,7 @@ const Body = ({refresh, setRefresh, selectedCategory, categoriesList}) => {
 
                             {/* Note card */}
                             <div className="w-135 h-160 mx-4 rounded-md flex z-0 flex-col bg-[#9a513e]">
-                                <h1 className="text-[#879a3e] text-4xl font-bold text-center pt-3 underline decoration-4  decoration-[#9a3e59]">
+                                <h1 className="text-[#879a3e] max-w-lg overflow-auto ml-3 text-4xl font-bold text-center pt-3 underline decoration-4 decoration-[#9a3e59]">
                                     {note.title}
                                 </h1>
                                 <p className="text-[#879a3e] max-w-135 wrap-break-word max-h-full overflow-y-scroll text-left text-xl px-4 pt-3 underline decoration-3 decoration-[#9a3e59]">
