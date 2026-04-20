@@ -1,14 +1,41 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {useForm} from "react-hook-form";
-import {notes} from "../../services/api.js";
+import {categories as categoriesApi, notes} from "../../services/api.js";
 import {Alert, Snackbar} from "@mui/material";
 
 
-const Header = ({setLoginState, setRefresh}) => {
+const Header = ({
+                    setLoginState,
+                    setRefresh,
+                    setCategoriesList,
+                    refresh,
+                    categoriesList,
+                    setSelectedCategory
+                }) => {
     const [newNote, setNewNote] = useState(false);
-    const CurrentCategory = "Category";
     const {register, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm();
+    const [newCategory, setNewCategory] = useState("");
 
+    // Get Notes Filtered by Category
+    useEffect(() => {
+        categoriesApi.getAll()
+            .then(res => setCategoriesList(res.data))
+            .catch(err => console.error(err));
+    }, [refresh, setCategoriesList]);
+    // Create Category
+    const handleCreateCategory = async () => {
+        try {
+            await categoriesApi.create({name: newCategory});
+
+            setNewCategory("");
+
+            const res = await categoriesApi.getAll();
+            setCategoriesList(res.data);
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const HandleDoneBtn = async (data) => {
 
@@ -36,23 +63,44 @@ const Header = ({setLoginState, setRefresh}) => {
     return (
         <div className="bg-[#003052] w-full h-60 flex justify-between items-start">
             <div
-                className="w-80 h-35 mt-10 ml-10 rounded-md bg-[#0044a1] flex flex-col items-center justify-center">
+                className="w-80 h-fit py-2 mt-10 ml-10 rounded-md bg-[#0044a1] flex flex-col items-center justify-center">
 
                 <button
-                    onClick={() => setNewNote(true)}
-                    className="bg-[#1e74fd] my-0.75 font-mono font-semibold text-3xl text-white w-76 h-15 rounded-md">
+                    onClick={() => {
+                        setNewNote(true)
+                        setRefresh(false);
+                    }}
+                    className="bg-[#1e74fd] my-0.75 font-mono font-semibold text-3xl cursor-pointer hover:bg-blue-600 text-white w-76 h-15 rounded-md">
                     New Note
                 </button>
 
                 <button
-                    className="bg-[#1e74fd] my-0.75 font-mono font-semibold text-3xl text-white w-76 h-15 rounded-md">
+                    onClick={handleCreateCategory}
+                    className="bg-[#1e74fd] my-0.75 font-mono font-semibold text-3xl cursor-pointer hover:bg-blue-600 text-white w-76 h-15 rounded-md">
                     New Category
                 </button>
+                <input
+                    value={newCategory}
+                    className="peer bg-[#0046aa] h-10 w-76 rounded-lg text-[#879a3e] mt-1.25 ring-2 px-2 ring-blue-600 focus:ring-sky-600 focus:outline-none focus:border-rose-600"
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="New category"
+                />
 
             </div>
 
-            <div className="w-310 h-24 mt-10 rounded-md bg-[#0044a1] flex flex-col items-center justify-center">
-                <h1 className="text-[#003052] text-5xl font-semibold font-roboto">{CurrentCategory}</h1>
+            <div className=" flex flex-col items-center justify-center">
+                <select
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-310 h-24 mt-10 rounded-md bg-[#0044a1] text-5xl text-[#003052] p-2 font-semibold font-roboto"
+                >
+                    <option value="">All categories</option>
+
+                    {categoriesList.map(cat => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <button

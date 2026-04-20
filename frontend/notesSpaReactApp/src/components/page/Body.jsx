@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import {notes} from "../../services/api.js";
+import {categories, notes} from "../../services/api.js";
 import {Alert, Snackbar} from "@mui/material";
 import {useForm} from "react-hook-form";
 
-const Body = ({refresh, setRefresh}) => {
+const Body = ({refresh, setRefresh, selectedCategory}) => {
     const [noteList, setNoteList] = useState([]);
     const {register, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm();
     const [updateNote, setUpdateNote] = useState(false);
@@ -11,13 +11,16 @@ const Body = ({refresh, setRefresh}) => {
     const [view, setView] = useState("active");
 
 
+    // Filter Notes by Category
     // Get Notes Filtered by Active or Archived
     useEffect(() => {
         const fetchNotes = async () => {
             try {
                 let res;
 
-                if (view === "active") {
+                if (selectedCategory) {
+                    res = await categories.getNotesByCategory(selectedCategory);
+                } else if (view === "active") {
                     res = await notes.getActive();
                 } else {
                     res = await notes.getArchived();
@@ -30,7 +33,7 @@ const Body = ({refresh, setRefresh}) => {
         };
 
         fetchNotes();
-    }, [refresh, view]);
+    }, [view, selectedCategory, refresh]);
 
     // Delete Note Function
     const DeleteBtn = async (id) => {
@@ -91,6 +94,7 @@ const Body = ({refresh, setRefresh}) => {
     return (
         <div className="bg-[#003052] w-full h-full flex flex-col justify-center items-center">
 
+
             {updateNote &&
                 (<div className="absolute inset-0 flex items-center justify-center bg-black/50 z-50">
                     <div className="w-135 h-160 mx-4 rounded-md flex flex-col bg-[#9a513e]">
@@ -141,7 +145,7 @@ const Body = ({refresh, setRefresh}) => {
 
             }
             <div
-                className="flex flex-col items-start justify-baseline h-170 w-80 rounded-md fixed left-10 bg-[#2f4476]">
+                className="flex flex-col items-start justify-baseline h-160 w-80 rounded-md fixed left-10 bg-[#2f4476]">
                 <ol className="w-70 mx-4  mt-20 text-surface overflow-y-scroll dark:text-white">
                     {noteList.map(note => (
                         <li key={note.id}
@@ -157,7 +161,7 @@ const Body = ({refresh, setRefresh}) => {
             <div
                 className="w-385 h-full flex justify-start align-middle items-start relative bottom-2 overflow-x-scroll rounded-md left-45">
                 <button
-                    className="bg-green-500 rounded-full fixed left-94 bottom-10 w-10 h-10 text-white text-2xl cursor-pointer hover:bg-green-600"
+                    className="bg-green-500 rounded-full fixed left-94 top-40 w-10 h-10 text-white text-2xl cursor-pointer hover:bg-green-600"
                     onClick={RefreshButton}>
                     <div
                         className="rotate-0 transition-transform flex align-middle justify-center items-center hover:rotate-180">
@@ -212,14 +216,14 @@ const Body = ({refresh, setRefresh}) => {
             <div className="flex gap-4 mb-4">
                 <button
                     onClick={() => setView("active")}
-                    className={`px-6 py-1 fixed top-26 right-31 font-mono font-semibold rounded ${view === "active" ? "bg-green-500" : "bg-gray-500"}`}
+                    className={`px-6 py-1 fixed top-40 right-31 font-mono font-semibold rounded ${view === "active" ? "bg-green-500" : "bg-gray-500"}`}
                 >
                     Active
                 </button>
 
                 <button
                     onClick={() => setView("archived")}
-                    className={`px-3 py-1 fixed top-26 right-4 font-mono font-semibold rounded ${view === "archived" ? "bg-yellow-500" : "bg-gray-500"}`}
+                    className={`px-3 py-1 fixed top-40 right-4 font-mono font-semibold rounded ${view === "archived" ? "bg-yellow-500" : "bg-gray-500"}`}
                 >
                     Archived
                 </button>
