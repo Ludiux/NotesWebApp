@@ -181,7 +181,7 @@ const Body = ({refresh, setRefresh, selectedCategory, categoriesList}) => {
                 </button>
                 <ol className="flex items-start justify-center">
                     {noteList.map(note => (
-                        <li key={note.id} className="relative mx-4"> {/* Add relative positioning here */}
+                        <li key={note.id} className="relative mx-4">
 
                             {/* Category button and dropdown container */}
                             <div className="relative left-102">
@@ -236,7 +236,6 @@ const Body = ({refresh, setRefresh, selectedCategory, categoriesList}) => {
                                 </p>
                             </div>
 
-                            {/* Action buttons - keep as is */}
                             <button
                                 onClick={() => {
                                     setUpdateNote(true);
