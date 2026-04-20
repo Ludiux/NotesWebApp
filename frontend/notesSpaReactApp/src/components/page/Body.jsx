@@ -183,7 +183,7 @@ const Body = ({refresh, setRefresh}) => {
                                 }
                                 }
                                 className="w-20 h-10 bg-[#9a3e59] relative bottom-12 left-90 rounded-xl transition-colors hover:bg-yellow-700 cursor-pointer text-white font-roboto font-semibold">
-                                Update
+                                Edit
                             </button>
 
                             <button
@@ -201,7 +201,7 @@ const Body = ({refresh, setRefresh}) => {
 
                                     setRefresh(prev => !prev);
                                 }}
-                                className="w-20 h-10 relative bottom-12 left-25 bg-[#1e74fd] cursor-pointer transition-colors hover:bg-blue-600 text-white rounded-xl"
+                                className="w-20 h-10 relative bottom-12 left-25 bg-[#1e74fd] cursor-pointer transition-colors hover:bg-blue-600 text-white font-semibold font-mono rounded-xl"
                             >
                                 {view === "active" ? "Archive" : "Restore"}
                             </button>
@@ -212,14 +212,14 @@ const Body = ({refresh, setRefresh}) => {
             <div className="flex gap-4 mb-4">
                 <button
                     onClick={() => setView("active")}
-                    className={`px-6 py-1 fixed top-26 right-29 rounded ${view === "active" ? "bg-green-500" : "bg-gray-500"}`}
+                    className={`px-6 py-1 fixed top-26 right-31 font-mono font-semibold rounded ${view === "active" ? "bg-green-500" : "bg-gray-500"}`}
                 >
                     Active
                 </button>
 
                 <button
                     onClick={() => setView("archived")}
-                    className={`px-3 py-1 fixed top-26 right-5 rounded ${view === "archived" ? "bg-yellow-500" : "bg-gray-500"}`}
+                    className={`px-3 py-1 fixed top-26 right-4 font-mono font-semibold rounded ${view === "archived" ? "bg-yellow-500" : "bg-gray-500"}`}
                 >
                     Archived
                 </button>
