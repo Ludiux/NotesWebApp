@@ -1,7 +1,7 @@
 <h1 align="center">
   <a href="https://github.com/ludiux/hirelens-challenges/ferreyra-678304">
     <!-- Please provide path to your logo here -->
-    <img src="docs/images/BiltenNotes.png" alt="Logo" width="200" height="100">
+    <img src="docs/images/BiltenNotes.png" alt="Logo" width="400" height="200">
   </a>
 </h1>
 
