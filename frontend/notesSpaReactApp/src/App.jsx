@@ -25,7 +25,7 @@ function App() {
         }
     }, []);
     return (
-        <div className="bg-[#003052] w-screen h-screen relative">
+        <div className="bg-[#003052] w-screen h-screen overflow-y-hidden">
             <div className="flex flex-col items-center justify-center h-full">
                 <Header setLoginState={setLoginState} categoriesList={categoriesList}
                         selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}

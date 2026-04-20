@@ -3,13 +3,14 @@ import {categories, notes} from "../../services/api.js";
 import {Alert, Snackbar} from "@mui/material";
 import {useForm} from "react-hook-form";
 
-const Body = ({refresh, setRefresh, selectedCategory}) => {
+const Body = ({refresh, setRefresh, selectedCategory, categoriesList}) => {
     const [noteList, setNoteList] = useState([]);
     const {register, handleSubmit, reset, formState: {errors, isSubmitting}} = useForm();
     const [updateNote, setUpdateNote] = useState(false);
     const [selectedNote, setSelectedNote] = useState(null);
     const [view, setView] = useState("active");
-
+    const [openCategoryNoteId, setOpenCategoryNoteId] = useState(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState("");
 
     // Filter Notes by Category
     // Get Notes Filtered by Active or Archived
@@ -48,7 +49,17 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
         }
     }
 
-    // Update Note Functionality
+    // Give category to note
+    const AssignCategoryBtn = async (noteId, categoryId) => {
+        if (!categoryId) return;
+
+        try {
+            await categories.addToNote(noteId, categoryId);
+            setRefresh(prev => !prev);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     // Fill Note Form
     useEffect(() => {
@@ -92,7 +103,7 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
 
 
     return (
-        <div className="bg-[#003052] w-full h-full flex flex-col justify-center items-center">
+        <div className="bg-[#003052] w-full h-full flex flex-row justify-center items-center ">
 
 
             {updateNote &&
@@ -145,8 +156,8 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
 
             }
             <div
-                className="flex flex-col items-start justify-baseline h-160 w-80 rounded-md fixed left-10 bg-[#2f4476]">
-                <ol className="w-70 mx-4  mt-20 text-surface overflow-y-scroll dark:text-white">
+                className="flex flex-col items-start justify-baseline h-160 w-80 rounded-md bg-[#2f4476]">
+                <ol className="w-70 mx-4 mt-20 text-surface overflow-y-scroll dark:text-white">
                     {noteList.map(note => (
                         <li key={note.id}
                             className="w-full border-b-4 my-4 rounded border-neutral-100 px-2 py-1 font-roboto font-medium text-xl dark:border-white/10">
@@ -159,7 +170,7 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
                 </ol>
             </div>
             <div
-                className="w-385 h-full flex justify-start align-middle items-start relative bottom-2 overflow-x-scroll rounded-md left-45">
+                className="w-385  h-fit flex justify-start align-middle items-start relative bottom-0 overflow-x-scroll rounded-md left-5">
                 <button
                     className="bg-green-500 rounded-full fixed left-94 top-40 w-10 h-10 text-white text-2xl cursor-pointer hover:bg-green-600"
                     onClick={RefreshButton}>
@@ -170,8 +181,53 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
                 </button>
                 <ol className="flex items-start justify-center">
                     {noteList.map(note => (
-                        <li key={note.id}>
-                            <div className="w-135 h-160 mx-4 rounded-md flex flex-col bg-[#9a513e]">
+                        <li key={note.id} className="relative mx-4"> {/* Add relative positioning here */}
+
+                            {/* Category button and dropdown container */}
+                            <div className="relative left-102">
+                                <button
+                                    onClick={() => {
+                                        setOpenCategoryNoteId(
+                                            openCategoryNoteId === note.id ? null : note.id
+                                        );
+                                    }}
+                                    className="bg-fuchsia-800 rounded-lg w-fit h-fit py-1 px-3 mb-2 text-white font-semibold font-mono"
+                                >
+                                    Add Category!
+                                </button>
+
+                                {openCategoryNoteId === note.id && (
+                                    <div
+                                        className="absolute z-50 mt-1 bg-[#0044a1] p-2 rounded-md w-fit left-0 top-full">
+                                        <select
+                                            value={selectedCategoryId}
+                                            onChange={(e) => setSelectedCategoryId(e.target.value)}
+                                            className="rounded-md text-center bg-[#0044a1] text-xl text-white p-0 font-semibold font-roboto"
+                                        >
+                                            <option value="">Select category</option>
+                                            {categoriesList.map(cat => (
+                                                <option key={cat.id} value={cat.id}>
+                                                    {cat.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <button
+                                            onClick={async () => {
+                                                if (!selectedCategoryId) return;
+                                                await AssignCategoryBtn(note.id, selectedCategoryId);
+                                                setOpenCategoryNoteId(null);
+                                                setSelectedCategoryId("");
+                                            }}
+                                            className="ml-2 bg-[#3e9a7f] px-3 py-1 rounded font-semibold font-mono text-[#003052]"
+                                        >
+                                            Confirm
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Note card */}
+                            <div className="w-135 h-160 mx-4 rounded-md flex z-0 flex-col bg-[#9a513e]">
                                 <h1 className="text-[#879a3e] text-4xl font-bold text-center pt-3 underline decoration-[#9a3e59]">
                                     {note.title}
                                 </h1>
@@ -180,12 +236,12 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
                                 </p>
                             </div>
 
+                            {/* Action buttons - keep as is */}
                             <button
                                 onClick={() => {
                                     setUpdateNote(true);
                                     setSelectedNote(note);
-                                }
-                                }
+                                }}
                                 className="w-20 h-10 bg-[#9a3e59] relative bottom-12 left-90 rounded-xl transition-colors hover:bg-yellow-700 cursor-pointer text-white font-roboto font-semibold">
                                 Edit
                             </button>
@@ -195,6 +251,7 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
                                 className="w-20 h-10 bg-yellow-600 relative bottom-12 left-95 rounded-xl transition-colors hover:bg-red-400 cursor-pointer text-white font-roboto font-semibold">
                                 Delete
                             </button>
+
                             <button
                                 onClick={async () => {
                                     if (view === "active") {
@@ -202,11 +259,9 @@ const Body = ({refresh, setRefresh, selectedCategory}) => {
                                     } else {
                                         await notes.unarchive(note.id);
                                     }
-
                                     setRefresh(prev => !prev);
                                 }}
-                                className="w-20 h-10 relative bottom-12 left-25 bg-[#1e74fd] cursor-pointer transition-colors hover:bg-blue-600 text-white font-semibold font-mono rounded-xl"
-                            >
+                                className="w-20 h-10 relative bottom-12 left-25 bg-[#1e74fd] cursor-pointer transition-colors hover:bg-blue-600 text-white font-semibold font-mono rounded-xl">
                                 {view === "active" ? "Archive" : "Restore"}
                             </button>
                         </li>

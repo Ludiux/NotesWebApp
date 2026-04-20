@@ -63,7 +63,7 @@ const Header = ({
     return (
         <div className="bg-[#003052] w-full h-60 flex justify-between items-start">
             <div
-                className="w-80 h-fit py-2 mt-10 ml-10 rounded-md bg-[#0044a1] flex flex-col items-center justify-center">
+                className="w-80 h-fit py-2 mt-10 ml-5.5 rounded-md bg-[#0044a1] flex flex-col items-center justify-center">
 
                 <button
                     onClick={() => {
@@ -91,7 +91,7 @@ const Header = ({
             <div className=" flex flex-col items-center justify-center">
                 <select
                     onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-310 h-24 mt-10 rounded-md bg-[#0044a1] text-5xl text-[#003052] p-2 font-semibold font-roboto"
+                    className="w-310 h-24 mt-10 rounded-md text-center bg-[#0044a1] text-5xl text-[#003052] p-2 font-semibold font-roboto"
                 >
                     <option value="">All categories</option>
 
