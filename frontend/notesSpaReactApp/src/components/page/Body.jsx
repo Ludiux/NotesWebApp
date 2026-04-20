@@ -132,7 +132,7 @@ const Body = ({refresh, setRefresh}) => {
                                     type="submit"
                                     disabled={isSubmitting}
                                     className={`font-medium font-roboto text-xl  text-white bg-[#1e74fd] hover:bg-blue-600 cursor-pointer rounded-lg w-fit h-fit py-2 px-2`}>
-                                    {isSubmitting ? "Updating..." : "Update"}
+                                    {isSubmitting ? "Editing..." : "Edit"}
                                 </button>
                             </div>
                         </form>
