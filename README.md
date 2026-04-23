@@ -56,20 +56,6 @@ The application allows users to:
 - Filter notes by category
 - Authenticate using JWT tokens
 
-## Requirements Met
-
-### Phase 1 (Mandatory)
-- ✅ Create, edit, and delete notes
-- ✅ Archive/unarchive notes
-- ✅ List active notes
-- ✅ List archived notes
-
-### Phase 2 (Extra Points)
-- ✅ Add/remove categories to notes
-- ✅ Filter notes by category
-
----
-
 ## Built With
 
 | Technology | Version |
